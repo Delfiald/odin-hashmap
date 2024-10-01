@@ -1,17 +1,16 @@
 class Node{
-  constructor(key, value){
+  constructor(key){
     this.key = key;
-    this.value = value;
-    this.nextNode = null;
+    this.nextNode = null
   }
 }
 
-class HashMap{
+class HashSet{
   constructor(initialCapacity = 16, loadFactor = .75) {
-    this.capacity = initialCapacity
-    this.loadFactor = loadFactor
-    this.size = 0
-    this.buckets = new Array(this.capacity)
+    this.capacity = initialCapacity;
+    this.loadFactor = loadFactor;
+    this.size = 0;
+    this.buckets = new Array(this.capacity);
   }
 
   checkIndex(index){
@@ -31,23 +30,21 @@ class HashMap{
     return hashCode;
   }
 
-  set(key, value) {
+  set(key) {
     let bucketIndex = this.hash(key) % this.capacity;
     this.checkIndex(bucketIndex)
 
     if(!this.buckets[bucketIndex]) {
-      this.buckets[bucketIndex] = new Node(key, value);
+      this.buckets[bucketIndex] = new Node(key);
       this.size++;
     }else {
       let current = this.buckets[bucketIndex]
       while(current) {
-        if(current.key === key) {
-          current.value = value
+        if (current.key === key) {
           return;
         }
-
         if(!current.nextNode){
-          current.nextNode = new Node(key, value);
+          current.nextNode = new Node(key);
           this.size++;
           break;
         }
@@ -68,29 +65,11 @@ class HashMap{
 
     tempBuckets.forEach(current => {
       while(current) {
-        this.set(current.key, current.value)
+        this.set(current.key)
         
         current = current.nextNode
       }
     });
-  }
-
-  get(key) {
-    let bucketIndex = this.hash(key) % this.capacity;
-    this.checkIndex(bucketIndex)
-
-    if(this.buckets[bucketIndex]){
-      let currentNode = this.buckets[bucketIndex];
-      while(currentNode){
-        if(currentNode.key === key){
-          return currentNode.value
-        }
-
-        currentNode = currentNode.nextNode
-      }
-    }
-
-    return null
   }
 
   has(key) {
@@ -154,7 +133,7 @@ class HashMap{
 
     tempBuckets.forEach(current => {
       while(current) {
-        this.set(current.key, current.value)
+        this.set(current.key)
         
         current = current.nextNode
       }
@@ -171,7 +150,7 @@ class HashMap{
     this.size = 0
   }
 
-  keys() {
+  entries() {
     const returnArray = []
     this.buckets.forEach(current => {
       while(current) {
@@ -183,80 +162,41 @@ class HashMap{
 
     return returnArray;
   }
-
-  values() {
-    const returnArray = []
-    this.buckets.forEach(current => {
-      while(current) {
-        returnArray.push(current.value)
-        
-        current = current.nextNode
-      }
-    })
-
-    return returnArray;
-  }
-
-  entries() {
-    const returnArray = []
-    this.buckets.forEach(current => {
-      while(current) {
-        returnArray.push([current.key, current.value])
-        
-        current = current.nextNode
-      }
-    })
-
-    return returnArray;
-  }
 }
 
-const test = new HashMap()
-test.set('apple', 'red')
-test.set('banana', 'yellow')
-test.set('carrot', 'orange')
-test.set('dog', 'brown')
-test.set('elephant', 'gray')
-test.set('frog', 'green')
-test.set('grape', 'purple')
-test.set('hat', 'black')
-test.set('ice cream', 'white')
-test.set('jacket', 'blue')
-test.set('kite', 'pink')
-test.set('lion', 'golden')
+const test = new HashSet()
+test.set('apple')
+test.set('banana')
+test.set('carrot')
+test.set('dog')
+test.set('elephant')
+test.set('frog')
+test.set('grape')
+test.set('hat')
+test.set('ice cream')
+test.set('jacket')
+test.set('kite')
+test.set('lion')
 
-console.log(test.get('hat')); // Output: black
+// Check the size of the HashSet after adding keys
+console.log(test.length()); // Expected output: 12 (total number of unique keys)
 
-test.set('apple', 'green'); // Rewrite value from 'red' to 'green'
-test.set('banana', 'ripe yellow'); // Rewrite value from 'yellow' to 'ripe yellow'
-test.set('dog', 'dark brown'); // Rewrite value from 'brown' to 'dark brown'
+// Check if certain keys exist in the HashSet
+console.log(test.has('apple'));       // Expected output: true (key exists)
+console.log(test.has('banana'));      // Expected output: true (key exists)
+console.log(test.has('grape'));       // Expected output: true (key exists)
+console.log(test.has('not_exists'));   // Expected output: false (key does not exist)
 
-console.log(test.get('apple')); // Output: green
-console.log(test.get('banana')); // Output: ripe yellow
-console.log(test.get('dog')); // Output: dark brown
+// Remove a key from the HashSet
+test.remove('banana');      // Removing 'banana' should succeed
+console.log(test.length());  // Expected output: 11 (one less than before)
 
-test.set('moon', 'silver'); // it will trigger resizing
+// Check if the removed key still exists
+console.log(test.has('banana')); // Expected output: false (key has been removed)
 
-console.log(`New Capacity: ${test.capacity}`); // Output: capacity * 2
+// Clear the HashSet
+test.clear();
+console.log(test.length()); // Expected output: 0 (all keys should be removed)
 
-console.log(test.get('moon')); // Output: silver
-console.log(test.get('grape')); // Output: purple
-
-console.log(test.has('apple')); // Output: true
-console.log(test.has('banana')); // Output: true
-console.log(test.has('nonexistent')); // Output: false
-
-test.remove('hat'); // remove 'hat'
-console.log(test.get('hat')); // Output: null
-
-console.log(test.length()); // Output: total key right now
-
-test.remove('grape'); // remove 'grape'
-console.log(test.length()); // Output: total key right now
-
-test.clear(); // remove all elements from map
-console.log(test.length()); // Output: 0
-
-console.log(test.keys()); // Output: []
-console.log(test.values()); // Output: []
-console.log(test.entries()); // Output: []
+// Check if a key exists after clearing
+console.log(test.has('apple')); // Expected output: false (HashSet is empty)
